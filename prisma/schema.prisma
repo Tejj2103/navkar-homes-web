@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  INDEPENDENT_HOUSE
+  PLOT
+  PENTHOUSE
+  STUDIO
+  FARMHOUSE
+}
+
+enum ListingType {
+  SALE
+  RENT
+}
+
+enum PropertyStatus {
+  ACTIVE
+  DRAFT
+  SOLD
+  RENTED
+  INACTIVE
+}
+
+model Property {
+  id            String         @id @default(cuid())
+  title         String
+  description   String?
+
+  listingType   ListingType
+  propertyType  PropertyType
+  status        PropertyStatus @default(ACTIVE)
+
+  // Pricing — stored in whole rupees (avoid float rounding issues)
+  priceInRupees Int
+  priceUnit     String?        // e.g. "month" for rent listings, null for sale
+
+  areaSqft      Int
+
+  locality      String
+  city          String
+  state         String
+  pincode       String
+
+  bedrooms      Int?
+  bathrooms     Int?
+
+  isFeatured    Boolean        @default(false)
+
+  images        PropertyImage[]
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([city, locality])
+  @@index([listingType, propertyType])
+}
+
+model PropertyImage {
+  id          String   @id @default(cuid())
+  url         String
+  alt         String?
+  sortOrder   Int      @default(0)
+  isCover     Boolean  @default(false)
+
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId  String
+
+  @@index([propertyId])
+}
