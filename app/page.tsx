@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { PropertyType } from "@prisma/client";
 import type { Property } from "@/types/property";
 
+export const dynamic = "force-dynamic";
+
 const propertyTypeLabel: Record<PropertyType, string> = {
   APARTMENT: "Apartment",
   VILLA: "Villa",
