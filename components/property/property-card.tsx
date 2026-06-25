@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { Bath, Bed, Heart, Ruler } from "lucide-react";
+import { Bath, Bed, Ruler } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { FavoriteButton } from "@/components/property/favorite-button";
 import { formatArea, formatINR } from "@/lib/format";
 import type { Property } from "@/types/property";
 
@@ -22,13 +23,7 @@ export function PropertyCard({ property }: { property: Property }) {
           {property.listingType === "SALE" ? "For Sale" : "For Rent"}
         </Badge>
 
-        <button
-          type="button"
-          aria-label="Save property"
-          className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-white/90 text-foreground backdrop-blur transition-colors hover:bg-white"
-        >
-          <Heart className="size-4" />
-        </button>
+        <FavoriteButton />
       </div>
 
       <div className="p-4">

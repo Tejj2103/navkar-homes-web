@@ -5,10 +5,12 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trendingProjects } from "@/lib/seed-trending";
+import { useRequireAuth } from "@/lib/use-require-auth";
 
 export function PremiumProjects() {
   const [index, setIndex] = useState(0);
   const project = trendingProjects[index];
+  const withAuth = useRequireAuth();
 
   function go(direction: "prev" | "next") {
     setIndex((current) => {
@@ -81,7 +83,11 @@ export function PremiumProjects() {
               <p className="text-sm font-semibold">{project.priceRangeLabel}</p>
               <p className="text-xs text-muted-foreground">{project.bhkLabel}</p>
             </div>
-            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button
+              size="sm"
+              onClick={() => withAuth()}
+              className="bg-accent text-accent-foreground hover:bg-accent/90"
+            >
               View Detail
             </Button>
           </div>

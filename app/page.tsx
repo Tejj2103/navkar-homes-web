@@ -2,9 +2,52 @@ import { HeroSearch } from "@/components/home/hero-search";
 import { TrendingProjects } from "@/components/home/trending-projects";
 import { PremiumProjects } from "@/components/home/premium-projects";
 import { PropertyGrid } from "@/components/home/property-grid";
-import { seedProperties } from "@/lib/seed-data";
+import { prisma } from "@/lib/prisma";
+import { PropertyType } from "@prisma/client";
+import type { Property } from "@/types/property";
 
-export default function Home() {
+const propertyTypeLabel: Record<PropertyType, string> = {
+  APARTMENT: "Apartment",
+  VILLA: "Villa",
+  INDEPENDENT_HOUSE: "Independent House",
+  PLOT: "Plot",
+  PENTHOUSE: "Penthouse",
+  STUDIO: "Studio",
+  FARMHOUSE: "Farmhouse",
+};
+
+async function getFeaturedProperties(): Promise<Property[]> {
+  const rows = await prisma.property.findMany({
+    where: { status: "ACTIVE" },
+    include: { images: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  return rows.map((row) => {
+    const coverImage = row.images.find((image) => image.isCover) ?? row.images[0];
+
+    return {
+      id: row.id,
+      title: row.title,
+      listingType: row.listingType,
+      propertyType: propertyTypeLabel[row.propertyType],
+      priceInRupees: row.priceInRupees,
+      priceUnit: row.priceUnit,
+      areaSqft: row.areaSqft,
+      locality: row.locality,
+      city: row.city,
+      state: row.state,
+      bedrooms: row.bedrooms,
+      bathrooms: row.bathrooms,
+      isFeatured: row.isFeatured,
+      coverImageUrl: coverImage?.url ?? "",
+    };
+  });
+}
+
+export default async function Home() {
+  const properties = await getFeaturedProperties();
+
   return (
     <div>
       <HeroSearch />
@@ -20,7 +63,7 @@ export default function Home() {
         </p>
 
         <div className="mt-8">
-          <PropertyGrid properties={seedProperties} />
+          <PropertyGrid properties={properties} />
         </div>
       </section>
     </div>

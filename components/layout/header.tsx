@@ -26,8 +26,8 @@ export function Header() {
           </Link>
         </nav>
 
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
-          List your property
+        <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Link href="/list-property">List your property</Link>
         </Button>
       </div>
     </header>

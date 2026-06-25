@@ -4,9 +4,11 @@ import { useRef } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { trendingProjects } from "@/lib/seed-trending";
+import { useRequireAuth } from "@/lib/use-require-auth";
 
 export function TrendingProjects() {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const withAuth = useRequireAuth();
 
   function scroll(direction: "left" | "right") {
     scrollerRef.current?.scrollBy({
@@ -74,6 +76,7 @@ export function TrendingProjects() {
                 </div>
                 <button
                   type="button"
+                  onClick={() => withAuth()}
                   className="rounded-md border border-white/60 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-white/10"
                 >
                   View Detail
