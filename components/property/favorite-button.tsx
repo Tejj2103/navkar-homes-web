@@ -10,7 +10,11 @@ export function FavoriteButton() {
     <button
       type="button"
       aria-label="Save property"
-      onClick={() => withAuth()}
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        withAuth();
+      }}
       className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-white/90 text-foreground backdrop-blur transition-colors hover:bg-white"
     >
       <Heart className="size-4" />

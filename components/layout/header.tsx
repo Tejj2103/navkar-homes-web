@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HeaderAuth } from "@/components/layout/header-auth";
 
 export function Header() {
   return (
@@ -26,9 +27,12 @@ export function Header() {
           </Link>
         </nav>
 
-        <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-          <Link href="/list-property">List your property</Link>
-        </Button>
+        <div className="flex items-center gap-4">
+          <HeaderAuth />
+          <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Link href="/list-property">List your property</Link>
+          </Button>
+        </div>
       </div>
     </header>
   );

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Bath, Bed, Ruler } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FavoriteButton } from "@/components/property/favorite-button";
@@ -10,7 +11,10 @@ export function PropertyCard({ property }: { property: Property }) {
   const priceLabel = property.priceUnit ? `${price}/${property.priceUnit}` : price;
 
   return (
-    <div className="group overflow-hidden rounded-lg bg-card shadow-[var(--shadow-card)] transition-transform hover:-translate-y-1">
+    <Link
+      href={`/property/${property.id}`}
+      className="group block overflow-hidden rounded-lg bg-card shadow-[var(--shadow-card)] transition-transform hover:-translate-y-1"
+    >
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={property.coverImageUrl}
@@ -49,6 +53,6 @@ export function PropertyCard({ property }: { property: Property }) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

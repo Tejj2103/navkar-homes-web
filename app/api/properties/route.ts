@@ -31,6 +31,16 @@ const createPropertySchema = z.object({
     .array(z.object({ url: z.string().url(), isCover: z.boolean() }))
     .min(1, "Add at least one photo"),
   isFeatured: z.boolean().optional(),
+  facing: z
+    .enum(["NORTH", "SOUTH", "EAST", "WEST", "NORTH_EAST", "NORTH_WEST", "SOUTH_EAST", "SOUTH_WEST"])
+    .optional(),
+  hasBoundaryWall: z.boolean().optional(),
+  constructionStatus: z.enum(["READY_TO_MOVE", "UNDER_CONSTRUCTION"]).optional(),
+  roadWidthFeet: z.coerce.number().int().optional(),
+  openSides: z.coerce.number().int().optional(),
+  transactionType: z.enum(["NEW", "RESALE"]).optional(),
+  highlights: z.array(z.string()).optional(),
+  features: z.array(z.string()).optional(),
 });
 
 export async function POST(request: Request) {
@@ -70,6 +80,14 @@ export async function POST(request: Request) {
       isFeatured: isAdmin ? Boolean(data.isFeatured) : false,
       status: isAdmin ? "ACTIVE" : "PENDING_REVIEW",
       ownerId: session.user.id,
+      facing: data.facing,
+      hasBoundaryWall: data.hasBoundaryWall,
+      constructionStatus: data.constructionStatus,
+      roadWidthFeet: data.roadWidthFeet,
+      openSides: data.openSides,
+      transactionType: data.transactionType,
+      highlights: data.highlights ?? [],
+      features: data.features ?? [],
       images: {
         create: images.map((image, index) => ({
           url: image.url,

@@ -37,6 +37,27 @@ enum UserRole {
   ADMIN
 }
 
+enum Facing {
+  NORTH
+  SOUTH
+  EAST
+  WEST
+  NORTH_EAST
+  NORTH_WEST
+  SOUTH_EAST
+  SOUTH_WEST
+}
+
+enum ConstructionStatus {
+  READY_TO_MOVE
+  UNDER_CONSTRUCTION
+}
+
+enum TransactionType {
+  NEW
+  RESALE
+}
+
 model Property {
   id            String         @id @default(cuid())
   title         String
@@ -61,6 +82,15 @@ model Property {
   bathrooms     Int?
 
   isFeatured    Boolean        @default(false)
+
+  facing             Facing?
+  hasBoundaryWall    Boolean?
+  constructionStatus ConstructionStatus?
+  roadWidthFeet      Int?
+  openSides          Int?
+  transactionType    TransactionType?
+  highlights         String[]            @default([])
+  features           String[]            @default([])
 
   images        PropertyImage[]
 

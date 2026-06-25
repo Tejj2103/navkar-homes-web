@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -17,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ImageUpload, type UploadedImage } from "@/components/list-property/image-upload";
+import { facingOptions, constructionStatusOptions, featureOptions } from "@/lib/property-options";
 
 const propertyTypeOptions = [
   { value: "APARTMENT", label: "Apartment" },
@@ -50,6 +52,13 @@ const formSchema = z.object({
   pincode: z.string().min(1, "Required"),
   bedrooms: z.coerce.number().int().optional(),
   bathrooms: z.coerce.number().int().optional(),
+  facing: z
+    .enum(["NORTH", "SOUTH", "EAST", "WEST", "NORTH_EAST", "NORTH_WEST", "SOUTH_EAST", "SOUTH_WEST"])
+    .optional(),
+  constructionStatus: z.enum(["READY_TO_MOVE", "UNDER_CONSTRUCTION"]).optional(),
+  roadWidthFeet: z.coerce.number().int().optional(),
+  openSides: z.coerce.number().int().optional(),
+  highlights: z.string().optional(),
 });
 
 type FormInput = z.input<typeof formSchema>;
@@ -58,10 +67,12 @@ type FormValues = z.output<typeof formSchema>;
 export function PropertyForm({ isAdmin }: { isAdmin: boolean }) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [imagesError, setImagesError] = useState<string | null>(null);
+  const [hasBoundaryWall, setHasBoundaryWall] = useState(false);
+  const [transactionType, setTransactionType] = useState<"NEW" | "RESALE">("RESALE");
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
 
   const {
     register,
@@ -76,6 +87,14 @@ export function PropertyForm({ isAdmin }: { isAdmin: boolean }) {
 
   const listingType = watch("listingType");
 
+  function toggleFeature(feature: string) {
+    setSelectedFeatures((current) =>
+      current.includes(feature)
+        ? current.filter((item) => item !== feature)
+        : [...current, feature],
+    );
+  }
+
   async function onSubmit(values: FormValues) {
     setSubmitError(null);
     setImagesError(null);
@@ -85,10 +104,22 @@ export function PropertyForm({ isAdmin }: { isAdmin: boolean }) {
       return;
     }
 
+    const highlights = values.highlights
+      ? values.highlights.split(",").map((item) => item.trim()).filter(Boolean)
+      : [];
+
     const response = await fetch("/api/properties", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...values, isFeatured, images }),
+      body: JSON.stringify({
+        ...values,
+        highlights,
+        isFeatured,
+        images,
+        hasBoundaryWall,
+        transactionType,
+        features: selectedFeatures,
+      }),
     });
 
     if (!response.ok) {
@@ -97,23 +128,8 @@ export function PropertyForm({ isAdmin }: { isAdmin: boolean }) {
       return;
     }
 
-    setSubmitted(true);
-    router.refresh();
-  }
-
-  if (submitted) {
-    return (
-      <div className="rounded-lg border border-border bg-card p-6 text-center">
-        <p className="font-medium">
-          {isAdmin ? "Your listing is now live." : "Your listing was submitted!"}
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {isAdmin
-            ? "It's published and visible on the homepage."
-            : "Our team will review it shortly before it goes live."}
-        </p>
-      </div>
-    );
+    const { id } = await response.json();
+    router.push(`/property/${id}`);
   }
 
   return (
@@ -214,6 +230,89 @@ export function PropertyForm({ isAdmin }: { isAdmin: boolean }) {
           {errors.pincode && (
             <p className="mt-1 text-xs text-destructive">{errors.pincode.message}</p>
           )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Select onValueChange={(value) => setValue("facing", value as FormValues["facing"])}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Facing" />
+          </SelectTrigger>
+          <SelectContent>
+            {facingOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          onValueChange={(value) =>
+            setValue("constructionStatus", value as FormValues["constructionStatus"])
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Construction status" />
+          </SelectTrigger>
+          <SelectContent>
+            {constructionStatusOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Input
+          type="number"
+          placeholder="Width of facing road (ft)"
+          {...register("roadWidthFeet")}
+        />
+        <Input type="number" placeholder="No. of open sides" {...register("openSides")} />
+      </div>
+
+      <div className="flex items-center justify-between rounded-lg border border-border p-3">
+        <span className="text-sm font-medium">Boundary Wall</span>
+        <Switch checked={hasBoundaryWall} onCheckedChange={setHasBoundaryWall} />
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          variant={transactionType === "NEW" ? "secondary" : "outline"}
+          onClick={() => setTransactionType("NEW")}
+        >
+          New
+        </Button>
+        <Button
+          type="button"
+          variant={transactionType === "RESALE" ? "secondary" : "outline"}
+          onClick={() => setTransactionType("RESALE")}
+        >
+          Resale
+        </Button>
+      </div>
+
+      <div>
+        <Input
+          placeholder="Key highlights, comma-separated (e.g. North-East Facing, Gated Compliant)"
+          {...register("highlights")}
+        />
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm font-medium">Features</p>
+        <div className="grid grid-cols-2 gap-2">
+          {featureOptions.map((feature) => (
+            <label key={feature} className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={selectedFeatures.includes(feature)}
+                onCheckedChange={() => toggleFeature(feature)}
+              />
+              {feature}
+            </label>
+          ))}
         </div>
       </div>
 
