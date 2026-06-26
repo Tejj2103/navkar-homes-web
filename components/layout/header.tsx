@@ -8,7 +8,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2">
-          <Home className="size-5 text-primary" />
+          <Home className="size-12 text-primary" />
           <span className="flex flex-col leading-tight">
             <span className="font-heading text-xl font-semibold tracking-tight">
               Navkar Estates
@@ -18,13 +18,13 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
-          <Link href="#" className="transition-colors hover:text-foreground">
+          <Link href="#" className="transition-colors hover:text-accent">
             Buy
           </Link>
-          <Link href="#" className="transition-colors hover:text-foreground">
+          <Link href="#" className="transition-colors hover:text-accent">
             Rent
           </Link>
-          <Link href="#" className="transition-colors hover:text-foreground">
+          <Link href="#" className="transition-colors hover:text-accent">
             Localities
           </Link>
         </nav>

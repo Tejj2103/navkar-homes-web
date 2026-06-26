@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/profile/logout-button";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { ProfileField } from "@/components/profile/profile-field";
@@ -56,7 +58,10 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex flex-col items-center gap-3">
+        <Button asChild variant="outline" className="w-full">
+          <Link href="/my-listings">My Listings</Link>
+        </Button>
         <LogoutButton />
       </div>
     </div>
