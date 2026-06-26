@@ -7,12 +7,14 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-heading text-xl font-semibold tracking-tight"
-        >
+        <Link href="/" className="flex items-center gap-2">
           <Home className="size-5 text-primary" />
-          Navkar Homes
+          <span className="flex flex-col leading-tight">
+            <span className="font-heading text-xl font-semibold tracking-tight">
+              Navkar Estates
+            </span>
+            <span className="text-xs text-muted-foreground">From Roots to Realty</span>
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">

@@ -3,7 +3,8 @@ export function Footer() {
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 sm:grid-cols-3">
         <div>
-          <p className="font-heading text-lg font-semibold tracking-tight">Navkar Homes</p>
+          <p className="font-heading text-lg font-semibold tracking-tight">Navkar Estates</p>
+          <p className="text-sm text-muted-foreground">From Roots to Realty</p>
           <p className="mt-2 max-w-xs text-sm text-muted-foreground">
             Discover apartments, villas, and plots for sale or rent across India.
           </p>
@@ -29,7 +30,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-border px-6 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Navkar Homes. All rights reserved.
+        © {new Date().getFullYear()} Navkar Estates. All rights reserved.
       </div>
     </footer>
   );

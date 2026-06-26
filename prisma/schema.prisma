@@ -113,6 +113,11 @@ model User {
   passwordHash  String?
   role          UserRole  @default(USER)
 
+  username      String?   @unique
+  address       String?
+  nickname      String?
+  dateOfBirth   DateTime?
+
   accounts      Account[]
   sessions      Session[]
   properties    Property[]

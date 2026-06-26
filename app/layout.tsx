@@ -18,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Navkar Homes — Find your next home",
+  title: "Navkar Estates — From Roots to Realty",
   description: "Browse apartments, villas, and plots for sale or rent.",
 };
 

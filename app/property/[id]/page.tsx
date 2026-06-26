@@ -284,7 +284,7 @@ export default async function PropertyDetailPage({
           </h2>
           <p className="mt-2 text-sm font-medium">{property.owner?.name ?? "Property Owner"}</p>
           <p className="text-xs text-muted-foreground">
-            Listed {postedBy.toLowerCase()} on Navkar Homes
+            Listed {postedBy.toLowerCase()} on Navkar Estates
           </p>
           <div className="mt-4">
             <ShowNumberButton phone="+91 98XXXXXX21" />
