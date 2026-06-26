@@ -6,7 +6,13 @@ import { FavoriteButton } from "@/components/property/favorite-button";
 import { formatArea, formatINR } from "@/lib/format";
 import type { Property } from "@/types/property";
 
-export function PropertyCard({ property }: { property: Property }) {
+export function PropertyCard({
+  property,
+  isFavorited = false,
+}: {
+  property: Property;
+  isFavorited?: boolean;
+}) {
   const price = formatINR(property.priceInRupees);
   const priceLabel = property.priceUnit ? `${price}/${property.priceUnit}` : price;
 
@@ -27,7 +33,7 @@ export function PropertyCard({ property }: { property: Property }) {
           {property.listingType === "SALE" ? "For Sale" : "For Rent"}
         </Badge>
 
-        <FavoriteButton />
+        <FavoriteButton propertyId={property.id} initialFavorited={isFavorited} />
       </div>
 
       <div className="p-4">

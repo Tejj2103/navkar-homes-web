@@ -3,6 +3,7 @@ import { TrendingProjects } from "@/components/home/trending-projects";
 import { PremiumProjects } from "@/components/home/premium-projects";
 import { PropertyGrid } from "@/components/home/property-grid";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { PropertyType } from "@prisma/client";
 import type { Property } from "@/types/property";
 
@@ -19,11 +20,23 @@ const propertyTypeLabel: Record<PropertyType, string> = {
 };
 
 async function getFeaturedProperties(): Promise<Property[]> {
-  const rows = await prisma.property.findMany({
-    where: { status: "ACTIVE" },
-    include: { images: true },
-    orderBy: { createdAt: "asc" },
-  });
+  const session = await auth();
+
+  const [rows, favoriteRows] = await Promise.all([
+    prisma.property.findMany({
+      where: { status: "ACTIVE" },
+      include: { images: true },
+      orderBy: { createdAt: "asc" },
+    }),
+    session?.user
+      ? prisma.favorite.findMany({
+          where: { userId: session.user.id },
+          select: { propertyId: true },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const favoritedIds = new Set(favoriteRows.map((row) => row.propertyId));
 
   return rows.map((row) => {
     const coverImage = row.images.find((image) => image.isCover) ?? row.images[0];
@@ -43,6 +56,7 @@ async function getFeaturedProperties(): Promise<Property[]> {
       bathrooms: row.bathrooms,
       isFeatured: row.isFeatured,
       coverImageUrl: coverImage?.url ?? "",
+      isFavorited: favoritedIds.has(row.id),
     };
   });
 }
@@ -61,7 +75,7 @@ export default async function Home() {
           Featured properties
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Hand-picked listings across Bengaluru, Mumbai, and Pune.
+          Hand-picked listings in Jaipur&apos;s most iconic localities.
         </p>
 
         <div className="mt-8">

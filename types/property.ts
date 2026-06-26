@@ -13,4 +13,5 @@ export type Property = {
   bathrooms?: number | null;
   isFeatured: boolean;
   coverImageUrl: string;
+  isFavorited?: boolean;
 };

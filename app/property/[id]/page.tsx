@@ -18,6 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/property/image-gallery";
+import { FavoriteButton } from "@/components/property/favorite-button";
 import { ShowNumberButton } from "@/components/property/show-number-button";
 import { EnquiryForm } from "@/components/property/enquiry-form";
 import { PriceTrendChart } from "@/components/property/price-trend-chart";
@@ -78,14 +79,23 @@ export default async function PropertyDetailPage({
     notFound();
   }
 
+  const session = await auth();
+
   if (property.status !== "ACTIVE") {
-    const session = await auth();
     const isOwner = session?.user.id === property.ownerId;
     const isAdmin = session?.user.role === "ADMIN";
     if (!isOwner && !isAdmin) {
       notFound();
     }
   }
+
+  const isFavorited = session?.user
+    ? Boolean(
+        await prisma.favorite.findUnique({
+          where: { userId_propertyId: { userId: session.user.id, propertyId: property.id } },
+        }),
+      )
+    : false;
 
   const price = formatINR(property.priceInRupees);
   const priceLabel = property.priceUnit ? `${price}/${property.priceUnit}` : price;
@@ -100,21 +110,29 @@ export default async function PropertyDetailPage({
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge className="bg-accent-soft text-accent hover:bg-accent-soft">
-          {property.listingType === "SALE" ? "For Sale" : "For Rent"}
-        </Badge>
-        {property.isFeatured && (
-          <Badge className="bg-accent text-accent-foreground hover:bg-accent">
-            Premium
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge className="bg-accent-soft text-accent hover:bg-accent-soft">
+            {property.listingType === "SALE" ? "For Sale" : "For Rent"}
           </Badge>
-        )}
-        {property.status !== "ACTIVE" && (
-          <Badge variant="outline">Pending review</Badge>
-        )}
-        <Badge variant="outline" className="gap-1">
-          <ShieldCheck className="size-3.5" /> Verified
-        </Badge>
+          {property.isFeatured && (
+            <Badge className="bg-accent text-accent-foreground hover:bg-accent">
+              Premium
+            </Badge>
+          )}
+          {property.status !== "ACTIVE" && (
+            <Badge variant="outline">Pending review</Badge>
+          )}
+          <Badge variant="outline" className="gap-1">
+            <ShieldCheck className="size-3.5" /> Verified
+          </Badge>
+        </div>
+
+        <FavoriteButton
+          propertyId={property.id}
+          initialFavorited={isFavorited}
+          className="flex size-9 items-center justify-center rounded-full border border-border bg-card transition-colors hover:bg-surface"
+        />
       </div>
 
       {property.images.length > 0 && (

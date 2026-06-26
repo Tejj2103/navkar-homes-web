@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeaderAuth } from "@/components/layout/header-auth";
+import { MobileMenu } from "@/components/layout/mobile-menu";
 
 export function Header() {
   return (
@@ -27,19 +28,23 @@ export function Header() {
           <Link href="#" className="transition-colors hover:text-accent">
             Localities
           </Link>
+          <Link href="/my-listings" className="transition-colors hover:text-accent">
+            My Listings
+          </Link>
+          <Link href="/favorites" className="transition-colors hover:text-accent">
+            Favorites
+          </Link>
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-4">
           <HeaderAuth />
           <Button
             asChild
-            className="bg-accent px-3 text-xs text-accent-foreground hover:bg-accent/90 sm:px-4 sm:text-sm"
+            className="hidden bg-accent text-accent-foreground hover:bg-accent/90 md:inline-flex"
           >
-            <Link href="/list-property">
-              <span className="sm:hidden">List</span>
-              <span className="hidden sm:inline">List your property</span>
-            </Link>
+            <Link href="/list-property">List your property</Link>
           </Button>
+          <MobileMenu />
         </div>
       </div>
     </header>

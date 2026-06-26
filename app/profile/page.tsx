@@ -62,6 +62,9 @@ export default async function ProfilePage() {
         <Button asChild variant="outline" className="w-full">
           <Link href="/my-listings">My Listings</Link>
         </Button>
+        <Button asChild variant="outline" className="w-full">
+          <Link href="/favorites">Favorites</Link>
+        </Button>
         <LogoutButton />
       </div>
     </div>
